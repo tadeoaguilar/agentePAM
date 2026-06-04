@@ -1,5 +1,61 @@
+# ── Datos del cliente (nunca commitear) ──────────────────────────────────────
 files/
 output/
 *.xlsx
+*.xls
+*.csv
+
+# ── Python ────────────────────────────────────────────────────────────────────
 __pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.whl
+
+# ── Entornos virtuales ────────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+.env/
+ENV/
+
+# ── Variables de entorno y secretos ──────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+*.env
+secrets.json
+credentials.json
+
+# ── Jupyter ───────────────────────────────────────────────────────────────────
 .ipynb_checkpoints/
+*_executed.ipynb
+
+# ── Testing y coverage ────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+coverage.xml
+*.cover
+
+# ── Herramientas de desarrollo ────────────────────────────────────────────────
+.mypy_cache/
+.ruff_cache/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.log
+
+# ── IDEs ──────────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
