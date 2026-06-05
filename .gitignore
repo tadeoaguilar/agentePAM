@@ -1,9 +1,5 @@
 # ── Datos del cliente (nunca commitear) ──────────────────────────────────────
-files/
-output/
-*.xlsx
-*.xls
-*.csv
+
 
 # ── Python ────────────────────────────────────────────────────────────────────
 __pycache__/
