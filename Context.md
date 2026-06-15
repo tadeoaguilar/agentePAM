@@ -97,6 +97,53 @@ Then comment out the `%pip install ...` magic line (cell 1) and run
 rows is the slow part). Writes `output/ReporteFinal_3400_202002.xlsx` (3 sheets:
 Resultado, Pendientes, Métricas).
 
+## Pending: Pagos/ layout standardization (3400) — ON HOLD
+
+Accounting plans to standardize **all** `files/Pagos/*.xlsx` files to the 23-column
+"compact" layout already used by 3401-3415, replacing `3400.xlsx`'s special 123-col
+"full" FBL1N export (sheet `'3400 2020'`, `skiprows=[1]`, `FBL1N_COLS` index map).
+
+**Sample provided this session**: `3400_NS.XLSX` (repo root, 38,264 rows, Feb-Dec
+2020). Confirmed it's structurally identical to `FBL1N_COLS_COMPACT` (sheet
+`'Sheet1'`, same 23 header names, just reordered — `load_fbl1n_file()`'s name-based
+rename already handles this, same as the existing "3407 Acreedor/Icono col-swap"
+case). **No loader changes needed** for the file itself.
+
+**Breaking issue identified**: Cell 21's `_fbl1n_jt = df_fbl1n[[..., 'via_pago', ...,
+'condicion_pago', ...]]` (both notebooks) does a hard list-based column selection.
+`via_pago`/`condicion_pago` exist in `df_fbl1n` today *only* because of `3400.xlsx`'s
+full-format columns (`FBL1N_COLS` indices 68/69) — the compact format
+(`FBL1N_COLS_COMPACT`) has no equivalent, and neither does `3400_NS.XLSX`. Once 3400
+switches to compact, **no file provides these columns** → `KeyError` crash.
+
+- `condicion_pago`/`pago_condicion` is never in `_col_map` (Cell 33) — losing it has
+  zero visible impact.
+- `via_pago`/`pago_via_pago` feeds the **"Forma de Pago"** output column for society
+  3400 (Cell 33: `_forma_pago_final = pago_via_pago.fillna(eco_forma_pago)`). Losing
+  it means 3400's "Forma de Pago" would fall back 100% to the Ecommerce/CFDI
+  `forma_pago` field (same as 3401-3415 today) — a coverage change, not a crash, once
+  the Cell 21 fix below is applied.
+
+**Decision (this session): HELD.** User will ask accounting whether **"Vía de Pago"**
+(payment method, ZLSCH — the field with real output impact) and optionally
+**"Condición de Pago"** (ZTERM, no current output impact) can be added as extra
+columns to the new compact export, before any code change is made. Also flagged:
+new layout adds an unused `Documento compras` (PO number) column — possible future
+lead for the 117 `NO_RESUELTO` WA/WE rows.
+
+**Fix ready when needed** (documented in
+`/Users/tadeo/.claude/plans/file-3400-ns-xlsx-is-the-linked-dawn.md`): change Cell
+21's `_fbl1n_jt` in both notebooks from `df_fbl1n[[...]]` to
+`df_fbl1n.reindex(columns=[...])` so missing columns become all-NaN instead of
+raising `KeyError` — forward-compatible whether or not accounting adds
+`via_pago`/`condicion_pago` to the new layout (if added, just extend
+`FBL1N_COLS_COMPACT` with the new header name → `'via_pago'`/`'condicion_pago'`
+mappings and the existing `_fbl1n_jt`/Cell 33 code needs no further change).
+
+Also operationally: production file should replace `files/Pagos/3400.xlsx` (same
+name/location) — don't leave both old and new 3400 files in `Pagos/` simultaneously
+(the glob would double-count).
+
 ## Open items / ideas for next session
 
 - 117 `NO_RESUELTO` rows remain — checked whether any have a sibling `Folio Fisc` in their
