@@ -1,0 +1,88 @@
+================================================================================
+                    QUICK START GUIDE - PAM_UUID_Agent.py
+================================================================================
+
+STEP 1: OPEN COMMAND PROMPT
+   Press: Windows Key + R
+   Type: cmd
+   Press: Enter
+
+STEP 2: NAVIGATE TO PROJECT
+   Type this and press Enter:
+   cd C:\Users\tadeo\gitlab\agentePAM
+
+STEP 3: RUN THE SCRIPT
+   Type this and press Enter:
+   python PAM_UUID_Agent.py
+
+DONE! Script will run for 5-10 minutes
+
+================================================================================
+
+WHAT HAPPENS DURING EXECUTION:
+
+1. Loading data files...
+   - AuxGastos.xlsx (GL expenses)
+   - Pagos files (Payment records)
+   - Compensacion.xlsx (Compensation data)
+   - Auxintercentros files (Account mappings)
+
+2. Building lookups...
+   - Creating intercompany account mappings
+   - Preparing fuzzy matching data
+
+3. Matching strategies (in order)...
+   - UUID direct matching
+   - Document number matching
+   - Compensation bridge matching
+   - Fuzzy matching with creditor info
+   - Fuzzy matching without creditor info
+
+4. Applying overrides...
+   - Intercompany account corrections
+   - Document 700071613 special fix (11210050 -> 11123162)
+
+5. Generating output...
+   - Creating ReporteFinal_3400_202002.xlsx
+
+================================================================================
+
+OUTPUT LOCATION:
+C:\Users\tadeo\gitlab\agentePAM\output\ReporteFinal_3400_202002.xlsx
+
+VERIFICATION (Document 700071613):
+- Column: "Cuenta bancaria de pago"
+- Expected value: 11123162 (Company 3400) ✓
+- Wrong value: 11210050 (Company 3407) ✗
+
+================================================================================
+
+COMMON ERRORS & FIXES:
+
+ERROR: "Python is not recognized"
+FIX: Install Python from https://www.python.org/downloads/
+
+ERROR: "No module named 'pandas'"
+FIX: Run this:
+     pip install pandas openpyxl xlsxwriter python-dateutil tqdm
+
+ERROR: "FileNotFoundError"
+FIX: Check files/ directory has:
+     - AuxGastos.xlsx
+     - Acreedor.xlsx
+     - Pagos/*.xlsx (11 files)
+     - Compensacion.xlsx
+     - Auxintercentros1.xlsx
+     - Auxintercentros2.xlsx
+
+ERROR: Script takes too long
+OK: This is normal! First run takes 5-10 minutes due to fuzzy matching
+
+================================================================================
+
+NEED HELP? Read these files:
+- RUN_INSTRUCTIONS.md (Detailed instructions)
+- FIX_SUMMARY.md (Explanation of the fix)
+- PAM_PYTHON_SCRIPT_README.md (Script documentation)
+
+================================================================================
